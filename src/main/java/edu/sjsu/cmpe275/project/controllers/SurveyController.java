@@ -144,7 +144,7 @@ public class SurveyController {
 					Invitation invitation = new Invitation(link, email, s);
 					invitationRepo.save(invitation);
 				default:
-					notifService.sendVerification(email, link);
+					notifService.sendInvitation(email, link);
 			}
 		}
 		

@@ -41,7 +41,7 @@ public class NotificationService {
 		javaMailSender.send(mail);
 	}
 	
-	public void sendVerification(String emailAddress, String link) {
+	public void sendInvitation(String emailAddress, String link) {
 		//send invitation email
 		
 		SimpleMailMessage  mail = new SimpleMailMessage();
