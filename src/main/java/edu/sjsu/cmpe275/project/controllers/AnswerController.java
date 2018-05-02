@@ -89,8 +89,9 @@ public class AnswerController {
 		// 4 set up relation between question and answer_question
 		// 5 save the necessaries.
 		
-		List<AnswerQuestion> aqList = answer.getAq();
-		for(AnswerQuestion aq : aqList) {
+		//List<AnswerQuestion> aqList = answer.getAq();
+		
+		for(AnswerQuestion aq : new ArrayList<AnswerQuestion>(answer.getAq())) {
 			Question q = questionRepo.findById(aq.getQuestionId()).orElse(null);
 			aq.setQuestion(q);
 			aq.setAnswer(answer);

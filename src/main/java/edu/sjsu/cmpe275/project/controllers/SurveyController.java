@@ -164,7 +164,7 @@ public class SurveyController {
 		//check date if it is expired
 		Date currentDate = new Date();
 		if(s.getEndTime().before(currentDate)) {
-			return new ResponseEntity<Survey>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Survey>(HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<Survey>(s, HttpStatus.OK);
 	}
