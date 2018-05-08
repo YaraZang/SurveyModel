@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import edu.sjsu.cmpe275.project.exception.CustomRestExceptionHandler;
+import edu.sjsu.cmpe275.project.exception.ExceptionJSONInfo;
 import edu.sjsu.cmpe275.project.View;
 import edu.sjsu.cmpe275.project.entities.Account;
 import edu.sjsu.cmpe275.project.repositories.AccountRepository;
@@ -70,12 +72,14 @@ public class AccountController {
 	@JsonView(View.Account.class)
 	public ResponseEntity<Account> getAccount(@PathVariable int id){
 		Account a = accountRepo.findById(id).orElse(null);
+		if(a == null) {
+			throw new CustomRestExceptionHandler(HttpStatus.NOT_FOUND, "Sorry, the requested account with id "+ id +" does not exist.");
+		}
 		return new ResponseEntity<Account>(a, HttpStatus.OK);
 	}
 	
 	@GetMapping("/email_verify")
-	@JsonView(View.Account.class)
-	public ResponseEntity<Account> getAccount(@RequestParam("email") String email){
+	public ResponseEntity<Object> getAccount(@RequestParam("email") String email){
 		Random rand = new Random();
 		int code = rand.nextInt(9000) + 1000;
 		boolean status = false;
@@ -87,8 +91,12 @@ public class AccountController {
 		}
 		else {
 			// throw exception: email already exist
+			ExceptionJSONInfo info = new ExceptionJSONInfo();
+			info.setCode(400);
+			info.setMsg("Email "+ email +" already exist.");
+			return new ResponseEntity<Object>(info, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<Account>(HttpStatus.OK);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 	
 	@PostMapping("/signup")
@@ -103,6 +111,9 @@ public class AccountController {
 			accountRepo.save(accountVerified);
 			notifService.sendNotification(email);
 		}
+		else {
+			throw new CustomRestExceptionHandler(HttpStatus.BAD_REQUEST, "Wrong verification code!");
+		}
 		// to do redirect
 		return new ResponseEntity<Account>(accountVerified,HttpStatus.OK);
 	}
@@ -114,7 +125,8 @@ public class AccountController {
 			   			@RequestParam("password") String password){
 		Account a = accountRepo.findAccountByEmail(email);
 		if(a == null || ! password.equals(a.getPassword()) || a.isStatus() == false) {
-			return new ResponseEntity<Account>(HttpStatus.BAD_REQUEST);
+			//return new ResponseEntity<Account>(HttpStatus.BAD_REQUEST);
+			throw new CustomRestExceptionHandler(HttpStatus.BAD_REQUEST, "Wrong email or password!");
 		}
 		
 		return new ResponseEntity<Account>(a, HttpStatus.OK);					

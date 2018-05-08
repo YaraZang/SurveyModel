@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import edu.sjsu.cmpe275.project.View;
@@ -24,7 +25,8 @@ public class Account {
 	@JsonView({View.Survey.class,View.Account.class,View.Question.class})
 	private String email;
 	@NotEmpty
-	@JsonView({View.Survey.class,View.Account.class,View.Question.class})
+	//@JsonView({View.Survey.class,View.Account.class,View.Question.class})
+	@JsonView({View.Account.class})
 	private String password;
 	
 	private int code;
@@ -32,6 +34,7 @@ public class Account {
 	
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="account")
 	@JsonView({View.Account.class,View.Question.class})
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private List<Survey> surveys;
 	
 	public Account() {

@@ -25,6 +25,8 @@ import edu.sjsu.cmpe275.project.entities.Question;
 import edu.sjsu.cmpe275.project.entities.Question.QUESTION_TYPES;
 import edu.sjsu.cmpe275.project.entities.Survey;
 import edu.sjsu.cmpe275.project.entities.Survey.SURVEY_TYPES;
+import edu.sjsu.cmpe275.project.exception.CustomRestExceptionHandler;
+import edu.sjsu.cmpe275.project.exception.ExceptionJSONInfo;
 import edu.sjsu.cmpe275.project.repositories.AnswerQuestionRepository;
 import edu.sjsu.cmpe275.project.repositories.AnswerRepository;
 import edu.sjsu.cmpe275.project.repositories.InvitationRepository;
@@ -50,9 +52,8 @@ public class AnswerController {
 	private InvitationRepository invitationRepo;
 	
 	@PostMapping(value = "/answer/{uuid}")
-	@JsonView(View.Answer.class)
-	public ResponseEntity<Answer> saveAnswer(@PathVariable("uuid") String uuid,					 
-											 @RequestBody Answer answer){
+	//@JsonView(View.Answer.class)
+	public ResponseEntity<?> saveAnswer(@PathVariable("uuid") String uuid, @RequestBody Answer answer){
 		
 		// according to the type
 		// 1 general or anonymous, skip the check
@@ -70,14 +71,19 @@ public class AnswerController {
 		Date currentDate = new Date();
 		
 		if(s.getStartTime().after(currentDate) || s.getEndTime().before(currentDate)) {
-			return new ResponseEntity<Answer>(HttpStatus.BAD_REQUEST);
+			//return new ResponseEntity<Answer>(HttpStatus.BAD_REQUEST);
+			throw new CustomRestExceptionHandler(HttpStatus.BAD_REQUEST, "Sorry, survey time is out.");
 		}
 			
 		if(type == SURVEY_TYPES.CLOSED_INVITATION || type == SURVEY_TYPES.OPEN_UNIQUE) {
 			
 			Answer a = answerRepo.findAnswerByEmailAndSurveyId(answer.getEmail(), s.getId());
 			if(a != null) {
-				return new ResponseEntity<Answer>(HttpStatus.BAD_REQUEST);
+				//return new ResponseEntity<Answer>(HttpStatus.BAD_REQUEST);
+				ExceptionJSONInfo info = new ExceptionJSONInfo();
+				info.setCode(400);
+				info.setMsg("Email "+ answer.getEmail() +" already submit an answer.");
+				return new ResponseEntity<Object>(info, HttpStatus.BAD_REQUEST);
 			}
 		}
 		
@@ -100,8 +106,10 @@ public class AnswerController {
 		}
 		answer.setSurvey(s);
 		answerRepo.save(answer);
-		
-		return new ResponseEntity<Answer>(HttpStatus.OK);
+		ExceptionJSONInfo info = new ExceptionJSONInfo();
+		info.setCode(200);
+		info.setMsg("Answer has been submitted.");
+		return new ResponseEntity<Object>(info, HttpStatus.OK);
 	}
 	
 	//get report for a certain survey
@@ -115,8 +123,15 @@ public class AnswerController {
 		 * 3 for each question in question list, split question content
 		 * 4 for each question content, find related answer_question, if exist, count ++
 		 */
-		//TODO add # of participants
+		
 		Survey s = surveyRepo.findById(surveyId).orElse(null);
+		Long countA = answerRepo.countBySurveyId(surveyId);
+		s.setParticipantNum(countA);
+		s.setParticipationRate(null);
+		if(s.getSurveyType() == SURVEY_TYPES.CLOSED_INVITATION) {
+			Long invitationNum = invitationRepo.countBySurveyId(surveyId);
+			s.setParticipationRate((countA * 100.0)/invitationNum + "%");
+		}
 		List<Question> questionList = s.getQuestions();
 		for(Question q : questionList) {
 			

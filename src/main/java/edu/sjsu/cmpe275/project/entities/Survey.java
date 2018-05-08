@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -63,6 +64,11 @@ public class Survey {
 	
 	private String link;
 	
+	@JsonView(View.Report.class)
+	private Long participantNum;
+	@JsonView(View.Report.class)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String participationRate;
 	
 	public Survey() {
 		
@@ -139,5 +145,23 @@ public class Survey {
 	public void setLink(String link) {
 		this.link = link;
 	}
+
+	public Long getParticipantNum() {
+		return participantNum;
+	}
+
+	public void setParticipantNum(Long participantNum) {
+		this.participantNum = participantNum;
+	}
+
+	public String getParticipationRate() {
+		return participationRate;
+	}
+
+	public void setParticipationRate(String participationRate) {
+		this.participationRate = participationRate;
+	}
+	
+	
 
 }
