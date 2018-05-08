@@ -1,18 +1,11 @@
 package edu.sjsu.cmpe275.project.controllers;
 
 import java.util.Random;
-
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailException;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,7 +31,7 @@ public class AccountController {
 		model.addAttribute("data", accountRepo.findAll(new PageRequest(page, 4)));
 		return "index";
 	}
-	*/
+	
 	
 	@GetMapping("/")
 	public String showIndex() {
@@ -71,6 +64,7 @@ public class AccountController {
 		
 		return "redirect:/";
 	}
+	*/
 	
 	@GetMapping("/account/{id}")
 	@JsonView(View.Account.class)
@@ -80,6 +74,7 @@ public class AccountController {
 	}
 	
 	@GetMapping("/email_verify")
+	@JsonView(View.Account.class)
 	public ResponseEntity<Account> getAccount(@RequestParam("email") String email){
 		Random rand = new Random();
 		int code = rand.nextInt(9000) + 1000;
@@ -97,6 +92,7 @@ public class AccountController {
 	}
 	
 	@PostMapping("/signup")
+	@JsonView(View.Account.class)
 	public ResponseEntity<Account> saveVerifiedAccount(@RequestParam("email") String email,
 													   @RequestParam("code") int code,
 													   @RequestParam("password") String password){
@@ -111,21 +107,17 @@ public class AccountController {
 		return new ResponseEntity<Account>(accountVerified,HttpStatus.OK);
 	}
 
-	/*login
-	 * 
+	
 	@GetMapping("/login")
-	public String login(@RequestParam("email") String email,
+	@JsonView(View.Account.class)
+	public ResponseEntity<Account> login(@RequestParam("email") String email,
 			   			@RequestParam("password") String password){
 		Account a = accountRepo.findAccountByEmail(email);
-		if(a != null && password == a.getPassword() && a.isStatus()) {
-			return "redirect:/";
+		if(a == null || ! password.equals(a.getPassword()) || a.isStatus() == false) {
+			return new ResponseEntity<Account>(HttpStatus.BAD_REQUEST);
 		}
 		
-		else if(a != null && password != a.getPassword()) {
-			return "login";
-		}
-		
-		return "signup";			
+		return new ResponseEntity<Account>(a, HttpStatus.OK);					
 	}
-	*/
+	
 }

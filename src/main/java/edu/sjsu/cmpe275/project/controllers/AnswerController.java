@@ -115,7 +115,7 @@ public class AnswerController {
 		 * 3 for each question in question list, split question content
 		 * 4 for each question content, find related answer_question, if exist, count ++
 		 */
-		
+		//TODO add # of participants
 		Survey s = surveyRepo.findById(surveyId).orElse(null);
 		List<Question> questionList = s.getQuestions();
 		for(Question q : questionList) {
