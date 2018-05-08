@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -65,8 +66,10 @@ public class Survey {
 	private String link;
 	
 	@JsonView(View.Report.class)
+	@Transient
 	private Long participantNum;
 	@JsonView(View.Report.class)
+	@Transient
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String participationRate;
 	
