@@ -25,6 +25,8 @@ import edu.sjsu.cmpe275.project.entities.Invitation;
 import edu.sjsu.cmpe275.project.entities.Question;
 import edu.sjsu.cmpe275.project.entities.Survey;
 import edu.sjsu.cmpe275.project.entities.Survey.SURVEY_TYPES;
+import edu.sjsu.cmpe275.project.exception.CustomRestExceptionHandler;
+import edu.sjsu.cmpe275.project.exception.ExceptionJSONInfo;
 import edu.sjsu.cmpe275.project.repositories.AccountRepository;
 import edu.sjsu.cmpe275.project.repositories.InvitationRepository;
 import edu.sjsu.cmpe275.project.repositories.QuestionRepository;
@@ -127,7 +129,7 @@ public class SurveyController {
 	//create link and send invitation email
 	@JsonView(View.Survey.class)
 	@PostMapping(value="/account/{accountId}/survey/{surveyId}/invitation")
-	public ResponseEntity<Survey> sendInvitation(@PathVariable("accountId") int accountId,
+	public ResponseEntity<?> sendInvitation(@PathVariable("accountId") int accountId,
 												 @PathVariable("surveyId") int surveyId,
 												 @RequestParam(value = "emails", required=false, defaultValue="") String emailArrayStr){
 		Survey s = surveyRepo.findById(surveyId).orElse(null);
@@ -148,7 +150,11 @@ public class SurveyController {
 			}
 		}
 		
-		return new ResponseEntity<Survey>(HttpStatus.OK);
+		//return new ResponseEntity<Survey>(HttpStatus.OK);
+		ExceptionJSONInfo info = new ExceptionJSONInfo();
+		info.setCode(200);
+		info.setMsg("Invitation emails have been sent.");
+		return new ResponseEntity<Object>(info, HttpStatus.OK);
 	}
 	
 	@JsonView(View.Survey.class)
@@ -159,7 +165,12 @@ public class SurveyController {
 		//type check
 		if(s == null) {
 			Invitation invitation = invitationRepo.findInvitationByLink(uuid);
-			s = invitation.getSurvey();
+			if(invitation != null) {
+				s = invitation.getSurvey();
+			}	
+			else{
+				throw new CustomRestExceptionHandler(HttpStatus.NOT_FOUND, "Sorry, the requested survey does not exist.");
+			}
 		}
 		//check date if it is expired
 		Date currentDate = new Date();

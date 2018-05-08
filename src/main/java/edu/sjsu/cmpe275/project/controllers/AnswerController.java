@@ -63,7 +63,12 @@ public class AnswerController {
 		//type check
 		if(s == null) {
 			Invitation invitation = invitationRepo.findInvitationByLink(uuid);
-			s = invitation.getSurvey();
+			if(invitation != null) {
+				s = invitation.getSurvey();
+			}	
+			else{
+				throw new CustomRestExceptionHandler(HttpStatus.NOT_FOUND, "Sorry, the requested survey does not exist.");
+			}
 		}
 		SURVEY_TYPES type = s.getSurveyType();
 		
