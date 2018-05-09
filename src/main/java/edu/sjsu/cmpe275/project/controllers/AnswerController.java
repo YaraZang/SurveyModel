@@ -1,5 +1,6 @@
 package edu.sjsu.cmpe275.project.controllers;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -58,6 +59,7 @@ public class AnswerController {
 		// according to the type
 		// 1 general or anonymous, skip the check
 		// 2 open or close, check if the email has already sumbitted
+		// 3 close check if the link has already submitted
 		
 		Survey s = surveyRepo.findSurveyByLink(uuid);
 		//type check
@@ -79,7 +81,14 @@ public class AnswerController {
 			//return new ResponseEntity<Answer>(HttpStatus.BAD_REQUEST);
 			throw new CustomRestExceptionHandler(HttpStatus.BAD_REQUEST, "Sorry, survey time is out.");
 		}
-			
+		//check if the link is corresponding to right email
+		if(type == SURVEY_TYPES.CLOSED_INVITATION) {
+			Invitation invitation = invitationRepo.findInvitationByLink(uuid);
+			if(! answer.getEmail().equals(invitation.getEmail())) {
+				throw new CustomRestExceptionHandler(HttpStatus.BAD_REQUEST, "Sorry, wrong email.");
+			}
+		}
+		
 		if(type == SURVEY_TYPES.CLOSED_INVITATION || type == SURVEY_TYPES.OPEN_UNIQUE) {
 			
 			Answer a = answerRepo.findAnswerByEmailAndSurveyId(answer.getEmail(), s.getId());
@@ -91,6 +100,7 @@ public class AnswerController {
 				return new ResponseEntity<Object>(info, HttpStatus.BAD_REQUEST);
 			}
 		}
+		
 		
 		
 		// the answer is valid, need to insert into DB
@@ -135,7 +145,8 @@ public class AnswerController {
 		s.setParticipationRate(null);
 		if(s.getSurveyType() == SURVEY_TYPES.CLOSED_INVITATION) {
 			Long invitationNum = invitationRepo.countBySurveyId(surveyId);
-			s.setParticipationRate((countA * 100.0)/invitationNum + "%");
+			DecimalFormat df = new DecimalFormat("##.##");
+			s.setParticipationRate(df.format((countA * 100.0)/invitationNum)+"%");
 		}
 		List<Question> questionList = s.getQuestions();
 		for(Question q : questionList) {

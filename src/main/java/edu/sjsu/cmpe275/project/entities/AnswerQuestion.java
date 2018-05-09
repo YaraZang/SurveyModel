@@ -20,7 +20,7 @@ public class AnswerQuestion {
 	@GeneratedValue
 	private int id;
 	
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.ALL})
 	@JoinColumn(name="question_id")
 	private Question question;
 	

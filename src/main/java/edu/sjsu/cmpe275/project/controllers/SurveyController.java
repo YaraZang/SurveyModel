@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,7 @@ import edu.sjsu.cmpe275.project.repositories.SurveyRepository;
 import edu.sjsu.cmpe275.project.services.NotificationService;
 
 @Controller
+@Transactional
 public class SurveyController {
 	
 	@Autowired
@@ -130,23 +133,49 @@ public class SurveyController {
 											 @PathVariable("accountId") int accountId,
 											 @PathVariable("surveyId") int surveyId){
 		Survey s = surveyRepo.findById(surveyId).orElse(null);
+		if(s == null) {
+			throw new CustomRestExceptionHandler(HttpStatus.NOT_FOUND, "Sorry, the requested survey does not exist.");
+		}
+		/*
 		s.setSurveyType(survey.getSurveyType());
 		s.setStartTime(survey.getStartTime());
 		s.setEndTime(survey.getEndTime());
 		s.setQuestions(survey.getQuestions());
 		s.setUpdateTime(new Date());
+		questionRepo.deleteQuestionBySurveyId(surveyId);
 		s.setQuestions(survey.getQuestions());
 		for(Question q: survey.getQuestions()) {
 			questionRepo.save(q);
 			q.setSurvey(s);
 		}
+		*/
+		Account account = accountRepo.findById(accountId).orElse(null);
+		survey.setAccount(account);
+		account.addSurvey(survey);
+		for(Question q: survey.getQuestions()) {
+			questionRepo.save(q);
+			q.setSurvey(survey);
+		}
+
+		String link = "";
+		String uuid = UUID.randomUUID().toString().replace("-", "");
 		
-		surveyRepo.save(s);
+		switch(survey.getSurveyType()) {
+		case CLOSED_INVITATION:
+			link = "";
+			break;
+			default:
+				link = uuid;	
+		}
+
+		survey.setLink(link);
+		survey.setUpdateTime(new Date());
+		surveyRepo.save(survey);
 		return new ResponseEntity<Survey>(s, HttpStatus.OK);
 	}
 
 	//create link and send invitation email
-	@JsonView(View.Survey.class)
+	//@JsonView(View.Survey.class)
 	@PostMapping(value="/account/{accountId}/survey/{surveyId}/invitation")
 	public ResponseEntity<?> sendInvitation(@PathVariable("accountId") int accountId,
 												 @PathVariable("surveyId") int surveyId,
