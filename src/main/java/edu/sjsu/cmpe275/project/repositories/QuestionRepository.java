@@ -6,4 +6,6 @@ import edu.sjsu.cmpe275.project.entities.Question;
 
 public interface QuestionRepository extends JpaRepository<Question, Integer>{
 	public Question findQuestionByGuiOrderAndSurveyId(int guiOrder, int surveyId);
+	
+	public void deleteQuestionBySurveyId(int surveyId);
 }

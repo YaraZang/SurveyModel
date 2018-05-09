@@ -3,6 +3,7 @@ package edu.sjsu.cmpe275.project.entities;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -58,7 +59,7 @@ public class Survey {
 	@JsonView({View.Survey.class,View.Account.class,View.Question.class})
 	private Date updateTime;
 	
-	@OneToMany(mappedBy="survey")
+	@OneToMany(cascade = { CascadeType.ALL },mappedBy="survey")
 	@JsonProperty("questions")
 	@JsonView({View.Survey.class})
 	private List<Question> questions;

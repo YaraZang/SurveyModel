@@ -88,6 +88,7 @@ public class AccountController {
 			Account accountUnverified = new Account(email, password, code, status);
 			accountRepo.save(accountUnverified);
 			notifService.sendVerification(email, code);
+			
 		}
 		else {
 			// throw exception: email already exist
@@ -96,7 +97,11 @@ public class AccountController {
 			info.setMsg("Email "+ email +" already exist.");
 			return new ResponseEntity<Object>(info, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<Object>(HttpStatus.OK);
+		//return new ResponseEntity<Object>(HttpStatus.OK);
+		ExceptionJSONInfo info = new ExceptionJSONInfo();
+		info.setCode(200);
+		info.setMsg("Verification code has been sent. Please check your email.");
+		return new ResponseEntity<Object>(info, HttpStatus.OK);
 	}
 	
 	@PostMapping("/signup")
