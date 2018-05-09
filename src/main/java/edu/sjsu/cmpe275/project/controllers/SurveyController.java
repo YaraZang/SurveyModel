@@ -74,6 +74,25 @@ public class SurveyController {
 		return new ResponseEntity<Survey>(s, HttpStatus.OK);
 	}
 	
+	//get one survey by surveyId
+	@GetMapping(value="/survey")
+	@JsonView(View.Survey.class)
+	public ResponseEntity<Survey> getOneSurveyBySurveyId(@RequestParam("surveyId") int surveyId){
+		Survey s = surveyRepo.findById(surveyId).orElse(null);
+		
+		return new ResponseEntity<Survey>(s, HttpStatus.OK);
+	}
+	
+	//get all general surveys
+	@GetMapping(value="/survey/surveyType/{surveyType}")
+	@JsonView(View.Survey.class)
+	public ResponseEntity<List<Survey>> getSurveysByType(@PathVariable("surveyType") SURVEY_TYPES surveyType){
+		int type = surveyType.ordinal();
+		List<Survey> s = surveyRepo.findSurveyBySurveyType(type);
+
+		return new ResponseEntity<List<Survey>>(s, HttpStatus.OK);
+	}
+	
 	//create a survey
 	@PostMapping(value="/account/{accountId}/survey")
 	@JsonView(View.Survey.class)
