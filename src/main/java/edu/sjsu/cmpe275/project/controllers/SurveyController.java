@@ -66,10 +66,11 @@ public class SurveyController {
 	//get one survey according to surveyId of an account
 	@GetMapping(value="/account/{accountId}/survey")
 	@JsonView(View.Survey.class)
-	public ResponseEntity<Survey> getOneSurvey(@PathVariable("accountId") int accountId, @RequestParam("surveyId") int surveyId){
+	public ResponseEntity<Survey> getOneSurvey(@PathVariable("accountId") int accountId, @RequestParam("surveyId") String surveyId){
 		Survey s = new Survey();
+		int sid = Integer.parseInt(surveyId);
 		if(accountRepo.findById(accountId).orElse(null) != null) {
-			s = surveyRepo.findById(surveyId).orElse(null);
+			s = surveyRepo.findById(sid).orElse(null);
 		}
 		return new ResponseEntity<Survey>(s, HttpStatus.OK);
 	}
