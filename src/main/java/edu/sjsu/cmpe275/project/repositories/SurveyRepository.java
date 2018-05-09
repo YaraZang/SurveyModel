@@ -12,5 +12,7 @@ public interface SurveyRepository extends JpaRepository<Survey, Integer>{
 	
 	@Query("select s from Survey s where survey_type = ?1")
 	public List<Survey> findSurveyBySurveyType(int surveyType);
+	
+	public List<Survey> findSurveyByAccountId(int accountId);
 
 }

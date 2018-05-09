@@ -61,7 +61,7 @@ public class SurveyController {
 	public ResponseEntity<List<Survey>> getOneSurvey(@PathVariable("accountId") int accountId){
 		List<Survey> surveys = new ArrayList<>();
 		if(accountRepo.findById(accountId).orElse(null) != null) {
-			surveyRepo.findAll().forEach(surveys::add);
+			surveyRepo.findSurveyByAccountId(accountId).forEach(surveys::add);
 		}
 		return new ResponseEntity<List<Survey>>(surveys, HttpStatus.OK);
 	}
