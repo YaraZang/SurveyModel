@@ -229,4 +229,30 @@ public class SurveyController {
 		}
 		return new ResponseEntity<Survey>(s, HttpStatus.OK);
 	}
+	
+	@PostMapping(value="/account/{accountId}/addsurvey")
+	@JsonView(View.Survey.class)
+	public ResponseEntity<Survey> createEmptySurvey(@RequestBody Survey survey, @PathVariable("accountId") int accountId){
+		Account account = accountRepo.findById(accountId).orElse(null);
+		survey.setAccount(account);
+		account.addSurvey(survey);
+		String link = "";
+		String uuid = UUID.randomUUID().toString().replace("-", "");
+		
+		switch(survey.getSurveyType()) {
+		case CLOSED_INVITATION:
+			link = "";
+			break;
+			default:
+				link = uuid;	
+		}
+
+		survey.setLink(link);
+		survey.setUpdateTime(new Date());
+		surveyRepo.save(survey);
+		//redirect "/account/{accountId}/survey/{surveyId}/invitation"
+		return new ResponseEntity<Survey>(survey, HttpStatus.OK);
+	}
+
+	
 }

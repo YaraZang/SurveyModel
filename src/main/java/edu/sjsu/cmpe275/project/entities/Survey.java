@@ -166,6 +166,8 @@ public class Survey {
 		this.participationRate = participationRate;
 	}
 	
-	
+	public void addQuestion(Question q) {
+		this.questions.add(q);
+	}
 
 }
