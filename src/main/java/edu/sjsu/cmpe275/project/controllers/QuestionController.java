@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import com.fasterxml.jackson.annotation.JsonView;
+
+import edu.sjsu.cmpe275.project.View;
 import edu.sjsu.cmpe275.project.entities.Question;
 import edu.sjsu.cmpe275.project.entities.Question.QUESTION_TYPES;
 import edu.sjsu.cmpe275.project.entities.Survey;
@@ -23,6 +27,7 @@ public class QuestionController {
 	@Autowired
 	private SurveyRepository surveyRepo;
 	
+	@JsonView(View.Question.class)
 	@GetMapping(value="/question/{id}")
 	public ResponseEntity<Question> getQuestion(){
 		Question q = new Question();
@@ -31,6 +36,7 @@ public class QuestionController {
 		return new ResponseEntity<Question>(q, HttpStatus.OK);
 	}
 
+	@JsonView(View.Question.class)
 	@PostMapping(value="/question")
 	public ResponseEntity<Question> saveQuestion(@RequestBody Question question){
 		questionRepo.save(question);
@@ -38,6 +44,7 @@ public class QuestionController {
 		return new ResponseEntity<Question>(question, HttpStatus.OK);
 	}
 	
+	@JsonView(View.Question.class)
 	@PostMapping(value="/addquestion/{surveyId}")
 	public ResponseEntity<Question> createQuestion(@PathVariable("surveyId") int surveyId,
 												   @RequestBody Question question){

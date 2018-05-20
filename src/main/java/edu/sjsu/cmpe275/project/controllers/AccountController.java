@@ -68,6 +68,18 @@ public class AccountController {
 	}
 	*/
 	
+	@GetMapping("/api/get_user_id")
+	@JsonView(View.Account.class)
+	public ResponseEntity<Account> getUserId(@RequestParam("email") String email) {
+		System.out.println(email);
+		Account a = accountRepo.findAccountByEmail(email);
+		if(a == null) {
+			//return new ResponseEntity<Account>(HttpStatus.BAD_REQUEST);
+			throw new CustomRestExceptionHandler(HttpStatus.BAD_REQUEST, "Wrong email or password!");
+		}
+		return new ResponseEntity<Account>(a, HttpStatus.OK);
+	}
+	
 	@GetMapping("/account/{id}")
 	@JsonView(View.Account.class)
 	public ResponseEntity<Account> getAccount(@PathVariable int id){

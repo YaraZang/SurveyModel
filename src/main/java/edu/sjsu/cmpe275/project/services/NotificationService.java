@@ -48,8 +48,8 @@ public class NotificationService {
 		mail.setTo(emailAddress);
 		mail.setFrom("sjsucmpe275@gmail.com");
 		mail.setSubject("Survey Invitation");
-		mail.setText("Survey Link: http://localhost:8080/survey" + link);
-		
+		//mail.setText("Survey Link: http://localhost:8080/survey" + link);
+		mail.setText("Survey Link: http://localhost:12345/private/surveys/" + link);
 		javaMailSender.send(mail);
 	}
 }

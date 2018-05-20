@@ -42,20 +42,20 @@ public class Survey {
 	private Account account;
 	
 	@JsonFormat(
-  	      shape = JsonFormat.Shape.STRING,
-  	      pattern = "yyyy-MM-dd-hh")
+	      shape = JsonFormat.Shape.STRING,
+	      pattern = "yyyy-MM-dd hh:mm")
 	@JsonView({View.Survey.class,View.Account.class,View.Question.class})
 	private Date startTime;
 	
 	@JsonFormat(
-  	      shape = JsonFormat.Shape.STRING,
-  	      pattern = "yyyy-MM-dd-hh")
+	      shape = JsonFormat.Shape.STRING,
+	      pattern = "yyyy-MM-dd hh:mm")
 	@JsonView({View.Survey.class,View.Account.class,View.Question.class})
 	private Date endTime;
 	
 	@JsonFormat(
-  	      shape = JsonFormat.Shape.STRING,
-  	      pattern = "yyyy-MM-dd-hh")
+		  shape = JsonFormat.Shape.STRING,
+		  pattern = "yyyy-MM-dd hh:mm")
 	@JsonView({View.Survey.class,View.Account.class,View.Question.class})
 	private Date updateTime;
 	
