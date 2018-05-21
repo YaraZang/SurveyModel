@@ -238,7 +238,7 @@ public class SurveyController {
 		account.addSurvey(survey);
 		String link = "";
 		String uuid = UUID.randomUUID().toString().replace("-", "");
-		
+		System.out.println(uuid);
 		switch(survey.getSurveyType()) {
 		case CLOSED_INVITATION:
 			link = "";
@@ -246,7 +246,7 @@ public class SurveyController {
 			default:
 				link = uuid;	
 		}
-
+		System.out.println(link);
 		survey.setLink(link);
 		survey.setUpdateTime(new Date());
 		surveyRepo.save(survey);

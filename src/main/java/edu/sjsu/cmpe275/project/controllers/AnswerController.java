@@ -140,6 +140,9 @@ public class AnswerController {
 		 */
 		
 		Survey s = surveyRepo.findById(surveyId).orElse(null);
+		if(s == null) {
+			throw new CustomRestExceptionHandler(HttpStatus.NOT_FOUND, "Sorry, the requested survey does not exist.");
+		}
 		Long countA = answerRepo.countBySurveyId(surveyId);
 		s.setParticipantNum(countA);
 		s.setParticipationRate(null);
@@ -165,7 +168,7 @@ public class AnswerController {
 				case SINGLE_CHOICE_TEXT_CHECKBOX:
 				case SINGLE_CHOICE_IMAGE_CHECKBOX:
 				case YES_NO:
-				case DATE_TIME:
+				//case DATE_TIME:
 				case STAR_RATING:
 					String questionContentStr = q.getQuestionContent().getQuestionContent();
 					String[] choiceArray = questionContentStr.split(";");//or any other separator
@@ -193,6 +196,7 @@ public class AnswerController {
 					q.setStatistic(totalM);
 					break;
 				case SHORT_ANSWER:
+				case DATE_TIME:
 					List<AnswerQuestion> aqList = aqRepo.findByQuestionId(q.getId());
 					String allAnswer = "";
 					for(AnswerQuestion aq : aqList) {
