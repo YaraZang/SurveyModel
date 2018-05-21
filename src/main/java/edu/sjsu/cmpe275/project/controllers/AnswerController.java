@@ -169,7 +169,7 @@ public class AnswerController {
 				case SINGLE_CHOICE_IMAGE_CHECKBOX:
 				case YES_NO:
 				//case DATE_TIME:
-				case STAR_RATING:
+				//case STAR_RATING:
 					String questionContentStr = q.getQuestionContent().getQuestionContent();
 					String[] choiceArray = questionContentStr.split(";");//or any other separator
 					ArrayList<String> choiceList = new ArrayList<String>(Arrays.asList(choiceArray));
@@ -197,6 +197,7 @@ public class AnswerController {
 					break;
 				case SHORT_ANSWER:
 				case DATE_TIME:
+				case STAR_RATING:
 					List<AnswerQuestion> aqList = aqRepo.findByQuestionId(q.getId());
 					String allAnswer = "";
 					for(AnswerQuestion aq : aqList) {
