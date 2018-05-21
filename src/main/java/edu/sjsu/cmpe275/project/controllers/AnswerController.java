@@ -153,11 +153,17 @@ public class AnswerController {
 			
 			QUESTION_TYPES questionType = q.getQuestionType();
 			switch(questionType) {
-				case SINGLE_CHOICE_TEXT:
-				case SINGLE_CHOICE_IMAGE:
-				case SINGLE_CHOICE_DROPDOWN:
-				case SINGLE_CHOICE_RADIO:
-				case SINGLE_CHOICE_CHECKBOX:
+//				case SINGLE_CHOICE_TEXT:
+//				case SINGLE_CHOICE_IMAGE:
+//				case SINGLE_CHOICE_DROPDOWN:
+//				case SINGLE_CHOICE_RADIO:
+//				case SINGLE_CHOICE_CHECKBOX:
+
+				case SINGLE_CHOICE_IMAGE_RADIO:
+				case SINGLE_CHOICE_TEXT_DROPDOWN:
+				case SINGLE_CHOICE_TEXT_RADIO:
+				case SINGLE_CHOICE_TEXT_CHECKBOX:
+				case SINGLE_CHOICE_IMAGE_CHECKBOX:
 				case YES_NO:
 				case DATE_TIME:
 				case STAR_RATING:
@@ -171,9 +177,11 @@ public class AnswerController {
 					}
 					q.setStatistic(totalS);
 					break;
-				case MULTIPLE_CHOICE_TEXT:
-				case MULTIPLE_CHOICE_IMAGE:
-				case MULTIPLE_CHOICE_CHECKBOX:
+//				case MULTIPLE_CHOICE_TEXT:
+//				case MULTIPLE_CHOICE_IMAGE:
+//				case MULTIPLE_CHOICE_CHECKBOX:
+				case MULTIPLE_CHOICE_IMAGE_CHECKBOX:
+				case MULTIPLE_CHOICE_TEXT_CHECKBOX:
 					String qcStr = q.getQuestionContent().getQuestionContent();
 					String[] selectionArray = qcStr.split(";");//or any other separator
 					ArrayList<String> selectionList = new ArrayList<String>(Arrays.asList(selectionArray));

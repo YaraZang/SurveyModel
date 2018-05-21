@@ -64,6 +64,7 @@ public class Survey {
 	@JsonView({View.Survey.class})
 	private List<Question> questions;
 	
+	@JsonView({View.Survey.class})
 	private String link;
 	
 	@JsonView(View.Report.class)
